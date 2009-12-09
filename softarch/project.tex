@@ -52,6 +52,8 @@ Papers:
   \item \citep{4plus1}
   \item \citep{gqm}
   \item \citep{gqm84}
+  \item \citep{docarc}
+  \item \citep{ddd}
 \end{itemize}
 \ldots
 
@@ -60,9 +62,26 @@ This section will outline the intended - or the expected if you want -
 architechture of JCommSy. \\
 
 Along with the software an image is provided as
-architechtural reference. This image can be seen in figure \ref{fig:intarch}.
-This image shows five horizontal layers with a utility slice that is common to
-all layers.
+architechtural reference. This image can be seen in figure \ref{fig:intarch} and
+the following assumptions will be based on reasoning about this image and the
+software.
+
+Notice the following observations about figure \ref{fig:intarch}.
+\begin{itemize}
+  \item 5 horizontal layers
+  \item a Cross cutting utility slice available for all layers
+  \item No finegrained illustrations of vertical slices, subsystems or interface
+    interactions
+\end{itemize}
+
+It is a bit backward to describe a design ``backwards'' Ie. based on existing
+code and software. On one hand if a design was part of the development process
+this would be digging operation trying to guess what that design is. On the
+other hand if a design was not a conscious part of the software the code
+``dictates'' the design in an autonomous way. The latter is not a real possibility
+as described by e.g. \citep[page 70, Chapter 2.4.1]{docarc}.
+
+
 
 \chapter{Analysis}
 \begin{itemize}
