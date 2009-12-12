@@ -54,6 +54,7 @@ Papers:
   \item \citep{gqm84}
   \item \citep{docarc}
   \item \citep{ddd}
+  \item \citep{slides1}
 \end{itemize}
 \ldots
 
@@ -75,13 +76,31 @@ Notice the following observations about figure \ref{fig:intarch}.
 \end{itemize}
 
 It is a bit backward to describe a design ``backwards'' Ie. based on existing
-code and software. On one hand if a design was part of the development process
-this would be digging operation trying to guess what that design is. On the
+code and software. On one hand, if a design was part of the development process,
+this would be a digging operation, trying to guess what that design is. On the
 other hand if a design was not a conscious part of the software the code
 ``dictates'' the design in an autonomous way. The latter is not a real possibility
 as described by e.g. \citep[page 70, Chapter 2.4.1]{docarc}.
 
+Nevertheless, to have something to base this analysis on, I will set down some
+``guesses'' as assumptions on the software. A way to help get a 360 feel of the
+an architecture as well as illustrate different aspects of the architecture is
+views\citep[Chap P.4 page 13]{docarc} and a common way to do this is the 4+1 view of
+\citep{4plus1}. The four parts is Logical View, Implementation View, Process
+View and Deployment View. The ``+1'' is an overlapping Use-Case View. The
+reasoning behind each of these views is that each of
+these views is for different stakeholders of the software and thereby preventing
+misunderstandings and overly complex ``all-in-one'' diagrams \citep{4plus1}.
+Other sets of views have been proposed, for example ``Functional, Static,
+Distribution and Dynamic views'' by \citep{carola}. In the following I have
+tried to do the 4 views of \citep{4plus1}.
 
+\section{Logical View}
+The logical view should show the main building blocks of the system. The
+recievers of this view description is architechts and developers and should
+provide an overview of the main components and their responisbilites
+\citep{4plus1}. A standard way to do this is class diagrams or class categories
+as described by \citep{booch}.
 
 \chapter{Analysis}
 \begin{itemize}
