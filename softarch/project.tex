@@ -62,7 +62,7 @@ places along with citation of the authorative source of the information
 %\end{itemize}
 %\ldots
 
-\chapter{Intended architechture}
+\chapter{Intended architechture}\label{arch}
 This section will outline the intended - or the expected if you want - architechture of JCommSy.
 
 Along with the software an image is provided as architechtural reference. This image can be
@@ -79,7 +79,7 @@ Notice the following observations about figure \ref{fig:intarch}.
 
 The missing vertical slices can be explained by the fact that only one ``product line'' is
 included in the software if that is chosen as the dividing factor of partitions
-like hinted at in the slides of \citep{slides2}
+like hinted at in the slides of \citep[page 18]{slides2}.
 With regards to subsystems and other interlayer division this could be achived
 by inspecting and possibly running the software, a set of subsystems could be determined and
 inserted into the layers.
@@ -143,15 +143,81 @@ For JCommSy the process view would show for example swimlane diagrams showing
 the process of creating a room or setting up an appointment, notifying users of
 appointments and so on.
 
+\section{Physical view}
+The last view is for describing where the different parts of the system
+physically is deployed. The stakeholders of this view is IT Operations and
+configuration management functions.
 
+For example in the case of JCommSy this view could contain at least an overview
+of the information presented in \verb+JCommSy\docs\HOWTO-deploy+ and
+\verb+JCommSy\docs\HOWTO-deploy-production.txt+. Ie. which war/jars should be
+deployed and how. It would also be very relevant to describe the interaction
+between the PHP code and JCommSy java-code.
+
+\section{+1-Usecase}
+This view contains information from the other views and is redundant in essence
+but helps bind it all together.
+
+For JCommSy a usecase view could be ``A teacher logs in and wants to setup rooms
+for an Software architecture class''.
+
+With these views in hand we should be able to go on and identify a sets of goals
+and make observations base on this.
 
 \chapter{Analysis}
-%\begin{itemize}
- %.. \item Metrics
-  %\item Oberservations
-%\end{itemize}
+As my involvement to this project is fictional my dispostions of ``important
+things'' might not align completely with the business needs of the JCommSy
+project but bear with me. 
+
+\section{Goals, Questions and Metrics}
+
+My background is operations and improvment/bugfixes 90\% as
+opposed to development of completely new software. This might bias me in a
+conservative direction, but to me the most important features of software (apart
+from actually fulfilling its job and thereby the current business need!!) is
+that it is reliable, easy to understand and enhance/change. I will try to
+capture this in a set of goals:
+
+\subsection*{Goal: We want easy modifiability and portability}
+\begin{itemize}
+  \item \textbf{Question:} Does the architecture follow the rules of the
+    reference architecture?\\
+ Layered architecture promises modifiability as well as
+    portability\citep[chap 2, page 77]{docarc} by information
+    hiding\citep{infhide} and separation of concerns. The layers should also help
+    with modifiability by reducing the overall complexity of the software with
+    abstraction\citep[chap 1]{artarc}.
+
+    The reference architecture in this case is the non-strict five layered tier
+    architecture as described in section \ref{arch}.
+
+  \item \textbf{Metrics}: Architecture violations in SonarJ. First of all within
+    the dependcy graph. Disallowed dependencies. This is reactive and should be
+    implemented for example as a part of Continuous Integration build.
+ \end{itemize}
+
+ \begin{itemize}
+   \item \textbf{Question:} Is the software complex?
+   \item \textbf{Metrics:} Cohesion, Coupling
+ \end{itemize}
+
+ \section{Observations}\label{analob}
+\subsection*{Does the architecture follow the rules of the reference
+architecture?}
+\begin{itemize}
+  \item 8 violating type dependencies. 
+\end{itemize}
+This is documented in figure \ref{fig:archviol} and it shows that all violations
+is for dependencies from logic and util layers to the presentation layer, more
+precisely, CommyyServlet in the presentation.
+
+
 
 \chapter{Refactoring}
+This section will provide a suggest of actions to take based on the observations
+from section \ref{analob}.
+
+\subsection{Architecture violations}
 %\begin{itemize}
   %\item identify problems (>2)
   %\item Suggest actions
@@ -160,7 +226,14 @@ appointments and so on.
 %\end{itemize}
 
 \chapter{Conclusion}
-\ldots
+This report has scratched the surface of an architecture report. It takes on the
+JCommSy software and via the provided architecture descripition elaborates via
+4+1 views about the architecture of JCommSy. Based on this description along
+with the theoretical foundation of the field software architecture a goal is
+setup and several questions and metrics is provided. Data from these metrics
+is collected from the JCommSy software and based on these obeservations some
+problems are identified and a set of actions to solve or minimize these problems
+is provided; reasoning and a refactoring plan.
 
 \backmatter
 \listoftables
@@ -191,10 +264,28 @@ numbers=left,
 \end{lstlisting}
 
 \chapter{Figures}
-\section{Architechture image}
+\section*{Architechture image}
 \begin{figure}
   \centering
-  \includegraphics[width=11cm]{arch}
+  \includegraphics[width=10.5cm]{arch}
   \caption{The given overview of JCommSy architechture}\label{fig:intarch}
 \end{figure}
+\newpage
+\section*{Architecture violations}
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{archviol}
+  \caption{Architecture violations from SonarJ}\label{fig:archviol}
+\end{figure}
+
+\section*{Layer Cycles}
+\begin{figure}
+  \centering
+  \includegraphics[width=9.5cm]{cycle}
+  \caption{Cycles between layers}\label{fig:cycle}
+\end{figure}
+
+
+
+
 \end{document}
