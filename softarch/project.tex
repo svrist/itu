@@ -40,32 +40,34 @@
 \chapter{Introduction}
 This report will do an architechture analysis of the JCommSy software as
 provided by \url{http://www.commsy.net}. The software provides a collabrative
-community system for project work. 
-\begin{itemize}
-  \item How the system looks like(4+1 view)
-  \item introduction of scope
-\end{itemize}
+community system for project work.
 
-\chapter{Theoretical foundation}
-Papers:
-\begin{itemize}
-  \item \citep{4plus1}
-  \item \citep{gqm}
-  \item \citep{gqm84}
-  \item \citep{docarc}
-  \item \citep{ddd}
-  \item \citep{slides1}
-\end{itemize}
-\ldots
+This report will be structured around first an overview of the architecture of
+JCommSy as guess and described by the authors of the software. Based on this I
+will set down some goals, founded by what I find reasonable and beneficial and
+the theory provided in this class. From these goals, relevant questions will
+guide the selection of metrics as defined by \citep{gqm,gqm84}. 
+
+Just as I just above,  the theoretical foundation will be inserted at the relevant
+places along with citation of the authorative source of the information
+%\chapter{Theoretical foundation}
+%Papers:
+%\begin{itemize}
+  %\item \citep{4plus1}
+  %\item \citep{gqm}
+  %\item \citep{gqm84}
+  %\item \citep{docarc}
+  %\item \citep{ddd}
+  %\item \citep{slides1}
+%\end{itemize}
+%\ldots
 
 \chapter{Intended architechture}
-This section will outline the intended - or the expected if you want -
-architechture of JCommSy. \\
+This section will outline the intended - or the expected if you want - architechture of JCommSy.
 
-Along with the software an image is provided as
-architechtural reference. This image can be seen in figure \ref{fig:intarch} and
-the following assumptions will be based on reasoning about this image and the
-software.
+Along with the software an image is provided as architechtural reference. This image can be
+seen in figure \ref{fig:intarch} and the following assumptions will be based on reasoning
+about this image and the software. 
 
 Notice the following observations about figure \ref{fig:intarch}.
 \begin{itemize}
@@ -75,15 +77,25 @@ Notice the following observations about figure \ref{fig:intarch}.
     interactions
 \end{itemize}
 
+The missing vertical slices can be explained by the fact that only one ``product line'' is
+included in the software if that is chosen as the dividing factor of partitions
+like hinted at in the slides of \citep{slides2}
+With regards to subsystems and other interlayer division this could be achived
+by inspecting and possibly running the software, a set of subsystems could be determined and
+inserted into the layers.
+
 It is a bit backward to describe a design ``backwards'' Ie. based on existing
 code and software. On one hand, if a design was part of the development process,
 this would be a digging operation, trying to guess what that design is. On the
 other hand if a design was not a conscious part of the software the code
 ``dictates'' the design in an autonomous way. The latter is not a real possibility
-as described by e.g. \citep[page 70, Chapter 2.4.1]{docarc}.
+as described by e.g. \citep[page 70, Chapter 2.4.1]{docarc}. 
 
 Nevertheless, to have something to base this analysis on, I will set down some
-``guesses'' as assumptions on the software. A way to help get a 360 feel of the
+``guesses'' as assumptions on the software and provide some smalle guesses/insights based on
+inspection of the code.
+
+A way to help get a 360 feel of the
 an architecture as well as illustrate different aspects of the architecture is
 views\citep[Chap P.4 page 13]{docarc} and a common way to do this is the 4+1 view of
 \citep{4plus1}. The four parts is Logical View, Implementation View, Process
@@ -93,7 +105,7 @@ these views is for different stakeholders of the software and thereby preventing
 misunderstandings and overly complex ``all-in-one'' diagrams \citep{4plus1}.
 Other sets of views have been proposed, for example ``Functional, Static,
 Distribution and Dynamic views'' by \citep{carola}. In the following the views
-from \citep{4plus1} are described and some of the concepts are applied to JCommSy code.
+from \citep{4plus1} are described and some of the concepts are applied to JCommSy code
 
 \section{Logical View}
 The logical view should show the main building blocks of the system. The
@@ -114,23 +126,38 @@ In the case of JCommSy I am a bit hindered by not knowing what the software does
 and how, but by browsing the source code I would imagine you would produce
 diagrams that shows subsystems like for example. ``Appointment subsystem'' as
 illustrated by the code snippet in listing \ref{listing:appointment} from
-CommsyServlet.java.
+CommsyServlet.java which should be placed as a subsystem in the logic layer.
+
+
+\section{Process View}
+This view is for integrators of systems and maybe ``enterprise architects'' and
+should show the processes in the system. This view could depict some of the
+processes that is somewhat closer to the business and as such lures with the
+promise of easy bridging between business and IT. Different ways to use this
+have been proposed, for example Business Process Modeling (BPM) where tools
+often aim to allow ``MS visio'' like diagrams to be the business input and from
+that generate underlying code. This view should also consider non-functional
+quality requirements like availability and performance.
+
+For JCommSy the process view would show for example swimlane diagrams showing
+the process of creating a room or setting up an appointment, notifying users of
+appointments and so on.
 
 
 
 \chapter{Analysis}
-\begin{itemize}
-  \item Metrics
-  \item Oberservations
-\end{itemize}
+%\begin{itemize}
+ %.. \item Metrics
+  %\item Oberservations
+%\end{itemize}
 
 \chapter{Refactoring}
-\begin{itemize}
-  \item identify problems (>2)
-  \item Suggest actions
-  \item Argue with business constraints
-  \item Refactoring plan (1-2)
-\end{itemize}
+%\begin{itemize}
+  %\item identify problems (>2)
+  %\item Suggest actions
+  %\item Argue with business constraints
+  %\item Refactoring plan (1-2)
+%\end{itemize}
 
 \chapter{Conclusion}
 \ldots
