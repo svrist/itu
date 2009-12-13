@@ -92,15 +92,31 @@ reasoning behind each of these views is that each of
 these views is for different stakeholders of the software and thereby preventing
 misunderstandings and overly complex ``all-in-one'' diagrams \citep{4plus1}.
 Other sets of views have been proposed, for example ``Functional, Static,
-Distribution and Dynamic views'' by \citep{carola}. In the following I have
-tried to do the 4 views of \citep{4plus1}.
+Distribution and Dynamic views'' by \citep{carola}. In the following the views
+from \citep{4plus1} are described and some of the concepts are applied to JCommSy code.
 
 \section{Logical View}
 The logical view should show the main building blocks of the system. The
 recievers of this view description is architechts and developers and should
 provide an overview of the main components and their responisbilites
 \citep{4plus1}. A standard way to do this is class diagrams or class categories
-as described by \citep{booch}.
+as described by \citep{booch}.\\
+
+With regards to JCommSy a reasonable - albeit high-level - image of this view
+could be the provided illustration as seen in \ref{fig:intarch}.
+
+\section{Implementation View}
+Created for the developers and any configuration management. This view should
+give an outline of the modules, and which packages they come in. With this in
+hand a developer should be able to start develop the software.
+
+In the case of JCommSy I am a bit hindered by not knowing what the software does
+and how, but by browsing the source code I would imagine you would produce
+diagrams that shows subsystems like for example. ``Appointment subsystem'' as
+illustrated by the code snippet in listing \ref{listing:appointment} from
+CommsyServlet.java.
+
+
 
 \chapter{Analysis}
 \begin{itemize}
@@ -127,7 +143,25 @@ as described by \citep{booch}.
 \bibliographystyle{alphaurl}
 \clearpage
 \appendix
-\chapter{Appendix}
+\chapter{Listings}
+\lstset{
+language=java,
+basicstyle=\tiny,
+numbers=left,
+}
+
+\begin{lstlisting}[caption={Extract from CommsyServlect.java},label=listing:appointment,firstnumber=235]
+  if (parameter.getModuleString().equals(MODULE_APPOINTMENT)
+  || parameter.getModuleString().equals(MODULE_DISCUSSION)
+  || parameter.getModuleString().equals(MODULE_ANNOUNCEMENT)
+  || parameter.getModuleString().equals(MODULE_GROUP)
+  || parameter.getModuleString().equals(MODULE_MATERIAL)
+  || parameter.getModuleString().equals(MODULE_TODO)
+  || parameter.getModuleString().equals(MODULE_TOPIC)
+  || parameter.getModuleString().equals(MODULE_USER)
+  || parameter.getModuleString().equals(MODULE_RSS)) {
+  getServletContext().getNamedDispatcher(LogicServlet.class.getSimpleName()).forward(request, response);
+\end{lstlisting}
 
 \chapter{Figures}
 \section{Architechture image}
