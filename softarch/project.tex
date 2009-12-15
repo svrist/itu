@@ -169,6 +169,15 @@ As my involvement to this project is fictional my dispostions of ``important
 things'' might not align completely with the business needs of the JCommSy
 project but bear with me. 
 
+\section{Setup}
+For the analysis SonarJ and PMD has been used for architecture description and
+metrics. JcommSy is imported without any tests and mocks. The naming convention
+per package level has guided the mapping from source-code to layers in SonarJ.\\
+\noindent
+\verb| **logic** -> Logic-layer |
+
+and so on.
+
 \section{Goals, Questions and Metrics}
 
 My background is operations and improvment/bugfixes 90\% as
@@ -179,6 +188,8 @@ that it is reliable, easy to understand and enhance/change. I will try to
 capture this in a set of goals:
 
 \subsection*{Goal: We want easy modifiability and portability}
+We assume that a reasonable premise for this is understandable code that is well
+structured.
 \begin{itemize}
   \item \textbf{Question:} Does the architecture follow the rules of the
     reference architecture?\\
@@ -191,14 +202,21 @@ capture this in a set of goals:
     The reference architecture in this case is the non-strict five layered tier
     architecture as described in section \ref{arch}.
 
-  \item \textbf{Metrics}: Architecture violations in SonarJ. First of all within
-    the dependcy graph. Disallowed dependencies. This is reactive and should be
+  \item \textbf{Metrics}: Architecture violations in SonarJ.\\
+    First of all within the dependcy graph. Disallowed dependencies. This is reactive and should be
     implemented for example as a part of Continuous Integration build.
  \end{itemize}
 
  \begin{itemize}
+   \item \textbf{Question:} Is there a God-class in the project?
+   \item \textbf{Metrics:} Methods/class, lines/class
+
+ \end{itemize}
+
+ \begin{itemize}
    \item \textbf{Question:} Is the software complex?
-   \item \textbf{Metrics:} Cohesion, Coupling
+   \item \textbf{Metrics:} Cohesion, Coupling, Cyclomatice complexity,
+     use-cycles
  \end{itemize}
 
  \section{Observations}\label{analob}
@@ -209,21 +227,77 @@ architecture?}
 \end{itemize}
 This is documented in figure \ref{fig:archviol} and it shows that all violations
 is for dependencies from logic and util layers to the presentation layer, more
-precisely, CommyyServlet in the presentation.
+precisely, CommSy in the presentation.
 
+\subsection*{Is there a God-class in the project}
+For this question two very handy metrics was proposed, methods/class and
+lines/class. For these metrics to make sense the result needs to verified
+against a threshold. Because of the nature of these things, such a threshold
+must be based on emperical data, or subjective ``guesses''. In this case I can
+use the number 100 methods/class given by  \citep{slides4} and take a guess that
+lines/class should not be larger than 600 lines/class. 
 
+In figure \ref{fig:locclass} the histogram of lines/class is graphed. Only the
+ParamBean class is larger than 600 lines.
+
+In figure \ref{fig:methclass} the histogram of methods/class is graphed and
+shows again only one class with more than 100 methods - the ParamBean.
+
+\subsection*{Is the software complex}
+Three metrics for this question:
+\begin{itemize}
+  \item[Cohesion]: Relational Cohesion should be between 1.5 and 4 for high
+    cohesion\citep{ndepend}. The relational cohesion metric counts the number of links within a
+    package (or layer in this case) and relates it to the amount of classes
+    within. In the case of JcommSy 3 of the layers have below $1.5$ in
+    relational cohesion as show in figure\ref{fig:rc}. Note though that ``item'' and
+    ``domainvalue'' layers both have 1.4+ in relational cohesion, so it's not
+    that far from five of 6 layers with ok cohesion.
+
+  \item[Coupling]: Efferent Coupling is defined by ``uncle Bob'' C. Martin as
+    the amount of outgoing links for a class. Again we have a subjective metric
+    and in this case I have estimated that below to is ok low coupling. That
+    gives a histogram as seen in figure \ref{fig:ec}.
+
+  \item[Cyclomatic Complexity]: Cyclomatic complexity is a number based on
+    levels of nested control flow paths and the exponential blowup that is
+    possible with nested control flow statements. \citep{mcc} recommends 10 as
+    the threshold for this metric and the result can be seen in figure
+    \ref{fig:cyc}
+
+  \item[Use-Cycles]: Via SonarJs cycle tab one layer cycle is found. See figure
+    \ref{fig:laycyc}. In figure \ref{fig:srccyc} another cycle is seen.
+\end{itemize}
 
 \chapter{Refactoring}
 This section will provide a suggest of actions to take based on the observations
-from section \ref{analob}.
+and problems hinted at in from section \ref{analob}.
+\begin{itemize}
+   \item Architecture violations
+   \item Medium cohesion numbers
+   \item Use-cycles.
+\end{itemize}
 
 \subsection{Architecture violations}
-%\begin{itemize}
-  %\item identify problems (>2)
-  %\item Suggest actions
-  %\item Argue with business constraints
-  %\item Refactoring plan (1-2)
-%\end{itemize}
+The disallowed dependecies could be cut. The violation looks quite isolated and
+could be allowed as an exception, which would not involve any work.\\
+
+\subsubsection{Refactoring plan}
+Cut the dependencies:
+\begin{itemize}
+   \item Extract field for all ``MODULE\_'' constants
+   \item Move new constants class to Util layer.
+\end{itemize}
+
+
+\subsection{Cohesion}
+The problems with cohesion identified above needs a careful look over. Low
+relation cohesion could suggest dead-code problems.
+
+\subsection{Use-cycles}
+The cycle between layers can be solved by cutting the architecture violations
+seen above. The source-file cycles could be removed by another cut-dependcy
+refactoring.
 
 \chapter{Conclusion}
 This report has scratched the surface of an architecture report. It takes on the
@@ -233,11 +307,10 @@ with the theoretical foundation of the field software architecture a goal is
 setup and several questions and metrics is provided. Data from these metrics
 is collected from the JCommSy software and based on these obeservations some
 problems are identified and a set of actions to solve or minimize these problems
-is provided; reasoning and a refactoring plan.
+is provided; reasoning and a refactoring plan for solving a architecture
+violation.
 
 \backmatter
-\listoftables
-%\listoffigures
 
 \bibliography{biblio}
 \bibliographystyle{alphaurl}
@@ -278,13 +351,61 @@ numbers=left,
   \caption{Architecture violations from SonarJ}\label{fig:archviol}
 \end{figure}
 
+\newpage
+\section*{Lines per Class(sourcefile)}
+\begin{figure}
+  \centering
+  \includegraphics[width=14cm]{lines-per-class}
+  \caption{Histogram of Lines/Class from SonarJ}\label{fig:locclass}
+\end{figure}
+\newpage
+
+\section*{Methods per class}
+\begin{figure}
+  \centering
+  \includegraphics[width=14cm]{methods-per-class}
+  \caption{Histogram of Methods/Class from Sonarj }\label{fig:methclass}
+\end{figure}
+
+
+\section*{Relational Cohesion (layer)}
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{relational-cohesion}
+  \caption{Relational Cohesion pie chart. 3 Layers below 1.5 and 3 layers within 1.5 and 4.}\label{fig:rc}
+\end{figure}
+
+\newpage
+\section*{Efferent Coupling (sourcefile)}
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{efferentcoupling}
+  \caption{Efferent Coupling pie chart.}\label{fig:ec}
+\end{figure}
+
+
+\section*{Cyclomatic complexity (sourcefile)}
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{cycle-complex-pie}
+  \caption{Cyclomatic complexity pie chart.}\label{fig:cyc}
+\end{figure}
+
 \section*{Layer Cycles}
 \begin{figure}
   \centering
   \includegraphics[width=9.5cm]{cycle}
-  \caption{Cycles between layers}\label{fig:cycle}
+  \caption{Cycles between layers}\label{fig:laycyc}
 \end{figure}
 
+
+
+\section*{Source Cycle}
+\begin{figure}
+  \centering
+  \includegraphics[width=9.5cm]{srccycle}
+  \caption{Cycles 4 classes}\label{fig:srccyc}
+\end{figure}
 
 
 
