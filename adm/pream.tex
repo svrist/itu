@@ -1,0 +1,33 @@
+\documentclass[english, a4paper, oneside, onecolumn, openany,article]{memoir}
+\usepackage{fix-cm,fixltx2e}
+\usepackage{babel}  % babel: Hyphenation patterns and language specific strings
+\usepackage{varioref}
+\usepackage[colorlinks,linkcolor=black,urlcolor=black,citecolor=black]{hyperref}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage[latin1]{inputenc}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage[square,numbers]{natbib}
+\usepackage{url}
+\usepackage{pslatex}
+\usepackage{multirow}
+\usepackage[T1]{fontenc}
+\usepackage{eso-pic}
+\usepackage{xcolor,calc}
+\usepackage{pdfpages}
+\newsubfloat{figure}
+\usepackage{placeins} % gives me FloatBarrier
+%Forhindrer floats i at flyde ind i næste afsnit
+\let\oldsection=\section % gemmer den gamle definition
+\renewcommand\section{\FloatBarrier\oldsection}
+
+\makeatletter
+\renewcommand\fps@figure{htbp} % Force figure placement
+\renewcommand\fps@table{htbp}
+\makeatother
+
+% setup captions
+\hangcaption
+\changecaptionwidth
+\captionwidth{9cm}
+

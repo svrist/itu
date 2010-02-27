@@ -1,0 +1,47 @@
+\input{pream}
+\title{Advanced Data Management - Assignment 1\\Value of Serializability}
+\author{S\o ren Bjerregaard Vrist\\ITU Copenhagen}
+
+\begin{document}
+\maketitle
+
+\chapter{Illustration of correctness}
+
+\section{run.py}
+
+\section{Results}
+Based on the given \verb|run.py| I graphed two graphs. Figure
+\ref{fig:origtime} and \ref{fig:origcorrect} is based on the output of
+\verb|run.py|. We are trying to show that with ``restrictive'' isolation levels
+- nearing on complete serialized with Repeatable read - you sacrifice
+performance but gain correctness.
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{origtime}
+  \caption[Average time over 5 runs]{Average time over 5 runs as a function of
+  swap-threads for both Cursor Stability(CS) and Repeatable Read(RR) isolation levels.\\
+  We would expect to non-neglible difference between CS and RR but to me it is
+  not conclusive in this graph. The runtime is improved on increased parallelism
+  for both isolation levels}\label{fig:origtime}
+\end{figure}
+
+Figure \ref{fig:origtime} shows the average runtime(y-axis) for 5 runs by run.py for
+each level of concurrency (x-axis).
+
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{origcorrect}
+  \caption{Average time over 5 runs as a function of swap-threads.}\label{fig:origcorrect}
+\end{figure}
+
+\section{Additional experiment}
+
+%\begin{figure}
+%\end{figure}
+
+
+\section{Currently Committed}
+
+
+\end{document}
