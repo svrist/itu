@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html> 
+ <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+    <title>DB2 Experiment (Flot.js)</title> 
+    <link href="layout.css" rel="stylesheet" type="text/css"></link> 
+    <!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]--> 
+    <script language="javascript" type="text/javascript" src="jquery.js"></script> 
+    <script language="javascript" type="text/javascript" src="jquery.flot.js"></script> 
+ </head> 
+ <body> 
+   <div id="menu">Experiment data: </div>
+      <h1><span class="italic">DB2 Throughput and Isolation levels</span><br><span id="title"></span></h1>
+	<i>For Cursor Select(<a href="http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.perf.doc/doc/c0004121.html">CS</a>) and Repeatable Read(<a href="http://publib.boulder.ibm.com/infocenter/db2luw/v9r7/index.jsp?topic=/com.ibm.db2.luw.admin.perf.doc/doc/c0004121.html">RR</a>) isolation levels</i>
+<table class="presentation">
+<tr>
+<td colspan="2" class="title"><h2>Fulltable scan throughput</h2></td>
+</tr>
+<tr>
+<td class="turned">Throughput</td><td><div id="placeholderavg" style="width:800px;height:450px;"></div> </td>
+</tr>
+<tr>
+<td colspan="2">Threads</td>
+</tr>
+</table>
+	<p> </p>
+	<table class="presentation">
+	<tr>
+	<td colspan="2" class="title">
+	<h2>Is the result correct?</h2>
+	</td>
+	</tr>
+	<tr><td colspan="2" class="descr">Based on the known right value, how many answers are the right value. As expected the Repeatble Read gives 100% correct answers</td>
+	</tr>
+	<tr>
+	<td class="turned" width="5">Correct</td>
+	<td>
+<div id="placeholdercorrect" style="width:800px;height:450px;"></div> 
+</td>
+</tr>
+<tr><td colspan="2">Threads</td></tr>
+</table>
+<script language="javascript" type="text/javascript">
+ $.ajaxSetup({async: false});
+ $.getScript('experiments.js');
+ $.ajaxSetup({async: true});
+ for (var i in experiments) 
+{ 
+  $("#menu").append("<span class=\"menuitem\" id=\""+i+"\"><a href=\"?experiment="+i+"\">"+i+"</a></span>");
+} 
+
+
+
+function getParameterByName( name )
+{
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "curon";
+  else
+ return results[1];
+}
+$("#"+getParameterByName("experiment")).addClass("active")
+
+  $.ajaxSetup({async: false});
+  $.getScript(experiments[getParameterByName("experiment")]);
+  $.ajaxSetup({async: true});
+</script>
+
+</body> 
+</html> 
