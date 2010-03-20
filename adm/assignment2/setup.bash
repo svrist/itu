@@ -22,7 +22,7 @@ function set_snapshots()
 
 function basic()
 {
-  local logfile="${base}-$1"
+  local logfile="${base}-exp$dd/$1"
   local threads=$2
   if [ "x${threads}x" = "xx" ]; then
     threads=10
@@ -38,12 +38,20 @@ function basic()
   else
     echo "Using $init as table"
   fi
+
+  if [ x$script = x ]; then
+    script="writes.py"
+  fi
+
+  if [ x$nums = x ]; then
+    nums=100000
+  fi
   cold $init
 
   set_snapshots "$logfile.setsnap"
   db2 -v "get db cfg for tuning" > $logfile.dbcfg
   echo "Starting script..."
-  python profwrites2.py -n 100000 -r $runs -t  $threads 2>&1 > $logfile.writes
+  python profwrites2.py -n $nums -r $runs -t  $threads 2>&1 > $logfile.writes
   get_snapshots "$logfile.snapshots"
 }
 
@@ -73,6 +81,7 @@ function logt()
 
 function setup()
 {
+  echo "Setup"
   dd=`date "+%s"`
   mkdir "${base}-exp$dd"
   slog="${base}-exp$dd/script.log"
