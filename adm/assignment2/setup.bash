@@ -41,6 +41,8 @@ function basic()
 
   if [ x$script = x ]; then
     script="writes.py"
+  else
+    echo "Custom script: $script"
   fi
 
   if [ x$nums = x ]; then
