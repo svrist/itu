@@ -12,7 +12,7 @@ parser.add_option("-c", "--correct", type="float", dest="correct",
                   default=15002703317.0, help="What is the correct value")
 
 parser.add_option("-n", "--name",  dest="experiment_name",
-                  default="DB2 Experiment", help="Overall Title of the experiment")
+                  default="DB2 Experiment", help="Overnall Title of the experiment")
 
 parser.add_option("--tpu","--throughput-unit",dest="tpu",default="sums/s",
                   help="What should the y-axis on the throughput have as unit?")
@@ -53,6 +53,9 @@ funs['sum']['correct']=lambda x:correct(opt.correct,x)
 namematch = re.compile("([^/-]+)-t(\d+)(..)\.txt")
 mr = re.compile("\(?([\d\.]+),?\)?")
 wr = FlotWriter(whitelist=["correct","avg"],filename=opt.filename)
+wr.setup_axis(graphname="correct",axis="y",unit='%',scale=10,decimals=0,max=1)
+wr.setup_axis(graphname="avg",axis="y",unit=opt.tpu,decimals=opt.tpd)
+
 for fname in args:
     m = namematch.search(fname)
     if not m is None:
@@ -73,4 +76,4 @@ for fname in args:
         raise Exception("Didnt match filename:%s"%fname)
 
 
-wr.flush(datanames=["UR","CS","RS","RR"])
+wr.flush(datanames=["UR","CS","RS","RR"],experimentname=opt.experiment_name)

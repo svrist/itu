@@ -60,7 +60,7 @@ class FlotWriter:
                 self.data[graphname][dataname] = []
             self.data[graphname][dataname].append(row)
 
-    def flush(self, datanames):
+    def flush(self, datanames,experimentname):
         from Cheetah.Template import Template
         from flot import flot
         t = flot()
@@ -81,13 +81,13 @@ class FlotWriter:
                 graphs[graphname] = g
             else:
                 g = graphs[graphname]
-            for isol,data in isoldata.items():
-                data.sort()
-                g.add_data(isol,data)
+            for dataname,rawdata in data.items():
+                rawdata.sort()
+                g.add_data(dataname,rawdata)
             g.remove_empty_data()
 
         t.graphs = graphs
-        t.experiment_name = opt.experiment_name
+        t.experiment_name = experimentname
         f = open("%s"%(self.filename),"w")
         f.write(str(t))
         f.close()
