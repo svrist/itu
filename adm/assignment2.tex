@@ -5,6 +5,17 @@
 \begin{document}
 \maketitle
 
+\chapter{Part1 - Writes}
+\section{Part1a}
+
+\subsection{Results}
+\subsubsection{Threads}
+\subsubsection{Indexes/primary key on table}
+\subsubsection{Log knobs}
+
+
+\chapter{Part2}
+
 
 \chapter{Log book over experiments}
 
@@ -12,10 +23,21 @@
 \begin{itemize}
   \item Noticed no IO when executing run 2..n of part1a.
   \item Changed writes.py to use multiprocessing.Pool and allow for writes on
-    all runs (8h)
-  \item Executed 10runs to flatten out any outlires with amazon ec2
+    all runs (8h)(Appendix \ref{app:prof})
+  \item Executed 10runs to flatten out any outlieres with amazon ec2 with each
+    (Appendix \ref{app:setup})
+  \item Part1b 
 \end{itemize}
 
 \section{Part2}
 
+\appendix
+\chapter{Appendix}
+\section{Profwrites2.py}\label{app:prof}
+New edition of the writes.py that does work on subsequent runs as well
+\lstinputlisting{assignment2/profwrites2.py}
+
+\section{setup.bash}\label{app:setup}
+Script for executing the complete set of experiments
+\lstinputlisting{assignment2/setup.bash}
 \end{document}
