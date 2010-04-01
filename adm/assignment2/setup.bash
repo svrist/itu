@@ -129,10 +129,15 @@ function db2b()
 {
   local logfile="${base}-exp$dd/$1"
   local sql=$2
+  local index=$3
 
 
   if [ x$nocold = x ]; then
     cold init.sql "2500000 employees.data employeespec 1"
+    if [ ! x${index}x = xx ]; then
+      echo "Adding index: $index"
+      db2 -vf $index
+    fi
   else
     echo "No cold!"
   fi
