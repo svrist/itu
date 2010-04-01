@@ -20,6 +20,14 @@ function set_snapshots()
   db2 -v reset monitor all
 }
 
+
+function tablelocking()
+{
+  db2 -v alter table accounts locksize table
+}
+
+
+
 function basic()
 {
   local logfile="${base}-exp$dd/$1"
@@ -48,13 +56,42 @@ function basic()
   if [ x$nums = x ]; then
     nums=100000
   fi
-  cold $init
+
+  if [ x$nocold = x ]; then
+    cold $init
+  else
+    echo "No cold!"
+  fi
+
+  if [ ! x$tl = x ]; then
+    echo "Tablelocking $nums $extraparms"
+    local oldscript=$script
+    local oldextra=$extraparams
+    script="writestl.py"
+    extraparams="$extraparams -l"
+  fi
+
+
 
   set_snapshots "$logfile.setsnap"
   db2 -v "get db cfg for tuning" > $logfile.dbcfg
-  echo "Starting script..."
-  python profwrites2.py -n $nums -r $runs -t  $threads 2>&1 > $logfile.writes
+  echo "Starting script... $script $extraparams -n $nums -r $runs -t $threads 2>&1"
+  python $script $extraparams -n $nums -r $runs -t  $threads 2>&1 > $logfile.writes
   get_snapshots "$logfile.snapshots"
+
+  if [ ! x$tl = x ]; then
+    script=$oldscript
+    exraparams=$oldextraparams
+  fi
+}
+
+function update()
+{
+  nocold=1
+  extraparams="-wupdateN -a0 -a2"
+  basic $@
+  unset nocold
+  unset extraparams
 }
 
 function change_param()
@@ -73,7 +110,6 @@ function append()
 }
 
 
-
 function logt()
 {
   local now=`date`
@@ -83,9 +119,63 @@ function logt()
 
 function setup()
 {
-  echo "Setup"
   dd=`date "+%s"`
   mkdir "${base}-exp$dd"
   slog="${base}-exp$dd/script.log"
   logt "Starting ${base}-exp$dd experiments"
+}
+
+function db2b()
+{
+  local logfile="${base}-exp$dd/$1"
+  local sql=$2
+
+
+  if [ x$nocold = x ]; then
+    cold init.sql "2500000 employees.data employeespec 1"
+  else
+    echo "No cold!"
+  fi
+  echo $sql
+  db2batch -d tuning -f $sql -o r 0 p 5 > $logfile.batch
+}
+
+function alter_bufferpool()
+{
+  local size=$1
+  db2 -v "alter bufferpool IBMDEFAULTBP size $size"
+}
+
+function alter_tablespace_prefetch()
+{
+  local size=$1
+
+  db2 -v "alter tablespace USERSPACE1 PREFETCHSIZE $size"
+
+}
+
+function reads()
+{
+  local logfile="${base}-exp$dd/$1"
+  local sql=$2
+  local params=$3
+
+  local index=$4
+
+
+
+  if [ x$nocold = x ]; then
+    cold init.sql "1000000 employees.data employeespec 1"
+
+    if [ ! x${index}x = xx ]; then
+      echo "Adding index: $index"
+      db2 -vf $index
+    fi
+  else
+    echo "No cold!"
+  fi
+  set_snapshots "$logfile.setsnap"
+  db2 -v "get db cfg for tuning" > $logfile.dbcfg
+  python reads.py -p $sql $params > $logfile.reads
+  get_snapshots "$logfile.snapshots"
 }
