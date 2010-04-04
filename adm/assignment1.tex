@@ -5,9 +5,27 @@
 \begin{document}
 \maketitle
 
-\chapter{Illustration of correctness}
+This is the solution and logbog book of S\o ren B. Vrist comprising a description of the execution
+of experiments as well as results and a discussion of what the experiments show
+and why.
 
-\section{run.py}
+The assignment states two questions to be answered. Question one is about
+reponse time vs. correctness of different isolationlevels and concurrency
+levels and results and discussion is placed in Section \ref{sec:illcorr}.
+Question two is about ``currently commited semantics'' of DB2 and the results of
+the experiment and a discussion of these is included in Section
+\ref{sec:curcommit}.\\
+
+The assignment provides a script which supposedly executes a number of updates
+on a table while doing a aggregate query covering all rows in the table. 
+The table is initialized with 1000000 rows via the ``gentable'' script also
+provided in the assignment zip.\\
+
+The execution of the experiments showed some lackings in the provided script and
+section \ref{sec:add} contains my additonal experiments with a changed script.
+
+\chapter{Illustration of correctness}\label{sec:illcorr}
+This section will first provide the description of doing the experiment with 
 
 \section{Results}
 Based on the given \verb|run.py| I graphed two graphs. Figure
@@ -28,20 +46,20 @@ performance but gain correctness.
 Figure \ref{fig:origtime} shows the average runtime(y-axis) for 5 runs by run.py for
 each level of concurrency (x-axis).
 
-
 \begin{figure}
   \centering
   \includegraphics[width=10cm]{origcorrect}
   \caption{Average time over 5 runs as a function of swap-threads.}\label{fig:origcorrect}
 \end{figure}
 
-\section{Additional experiment}
+\section{Additional experiment}\label{sec:add}
 
 %\begin{figure}
 %\end{figure}
 
 
-\section{Currently Committed}
+\chapter{Currently Committed}\label{sec:curcommit}
+\ldots
 
 
 \end{document}
