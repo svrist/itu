@@ -1,0 +1,23 @@
+ bonnie -r 1800
+Writing with putc()...done
+Writing intelligently...done
+Rewriting...done
+Reading with getc()...done
+Reading intelligently...done
+start 'em...done...done...done...
+Create files in sequential order...done.
+Stat files in sequential order...done.
+Delete files in sequential order...done.
+Create files in random order...done.
+Stat files in random order...done.
+Delete files in random order...done.
+Version 1.03c       ------Sequential Output------ --Sequential Input- --Random-
+                    -Per Chr- --Block-- -Rewrite- -Per Chr- --Block-- --Seeks--
+Machine        Size K/sec %CP K/sec %CP K/sec %CP K/sec %CP K/sec %CP  /sec %CP
+ip-10-226-231-23 4G 15103  27 18218   2 22625   1 25395  27 98004   2  4171   1
+                    ------Sequential Create------ --------Random Create--------
+                    -Create-- --Read--- -Delete-- -Create-- --Read--- -Delete--
+              files  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP  /sec %CP
+                 16 28727  35 +++++ +++ +++++ +++ +++++ +++ +++++ +++ +++++ +++
+ip-10-226-231-230,4G,1
+:

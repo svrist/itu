@@ -34,6 +34,7 @@ NBTUPLES       = 1000000
 SPECFILE       = 'accountspec'
 NBKEYS         = 1
 ATTLIST        = []
+TL             = False
 
 ### Database parameters (DATABASE; HOSTNAME; PORT; USERNAME; PASSWORD)
 sys.path.append("..")
@@ -59,6 +60,8 @@ def write(q,data):
     ibm_db.autocommit(ibm_db.SQL_AUTOCOMMIT_OFF)
     # Set isolation level
     ret = ibm_db.exec_immediate(conn, "SET CURRENT ISOLATION = "+ISOL_LEVEL)
+    if TL:
+        ret = ibm_db.exec_immediate(conn, "LOCK TABLE accounts in exclusive mode")
     # Prepare Statements
     write_stmt = ibm_db.prepare(conn, write_str)
     if (write_stmt == False): raise Usage("Failed to prepare write statement")
