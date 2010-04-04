@@ -3,6 +3,7 @@
 . setup.bash
 base=run1
 setup
+script=profwrites3.py
 
 logt "Threads experiments"
 change_param "LOGBUFSZ" 256 >> $slog

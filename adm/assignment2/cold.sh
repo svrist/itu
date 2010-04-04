@@ -40,6 +40,7 @@ function cold()
 
   db2 connect to tuning
   db2 -v "FLUSH PACKAGE CACHE dynamic"
+  db2pdcfg -db tuning -flushbp
   echo "dropping table";
   db2 -vf cleanup.sql
   db2 -vtf $init
