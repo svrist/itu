@@ -20,24 +20,70 @@
 \chapter{Log book over experiments}
 
 \section{Part 1}
+
+\subsection{Problems with writes.py}
 \begin{itemize}
-  \item Noticed no IO when executing run 2..n of part1a.
-  \item Changed writes.py to use multiprocessing.Pool and allow for writes on
+  \item[2010-03 16-20] Noticed no IO when executing run 2..n of part1a.
+    \begin{itemize}
+      \item Changed writes.py to use multiprocessing.Pool and allow for writes on
     all runs (8h)(Appendix \ref{app:prof})
+   \end{itemize}
   \item Executed 10runs to flatten out any outlieres with amazon ec2 with each
     (Appendix \ref{app:setup})
-  \item Part1b 
+  \item[2010-03 21] Part1b in the assignement text says that you need to use a \verb|db2 +c|\ldots
+    command to enforce a tablelock. That doesnt work because the script uses
+    another connection. Changed the script to contain a ``lock table'' part.
+    (Included in appendix \ref{app:tl}
+  \item[2010-04 04] Read newsgroup and read that a bug existed in writes.py
+    concerns the ``AUTO\_COMMIT'' parts of the code.\\
+    Fixed the script and verified that my old experiments is void:
+    \begin{itemize}
+      \item Run from 2010-03-20: \verb|Commit statements attempted  = 500037|
+      \item Run from 2010-04-04 with fixed script \verb|Commit statements attempted  = 4|
+    \end{itemize}
+    Notice that the scripts included in the appendix ARE fixed now. 
+    This affects all experiments until today, including assignment1.
 \end{itemize}
 
 \section{Part2}
+\begin{itemize}
+  \item part2
+\end{itemize}
 
 \appendix
 \chapter{Appendix}
 \section{Profwrites2.py}\label{app:prof}
 New edition of the writes.py that does work on subsequent runs as well
 \lstinputlisting{assignment2/profwrites2.py}
+\section{writestl.py}\label{app:tl}
+New edition of the writes.py that contains a tablelocking switch.
+\lstinputlisting{assignment2/writestl.py}
 
-\section{setup.bash}\label{app:setup}
-Script for executing the complete set of experiments
+\section{setup.bash and experiment execution}\label{app:setup}
+To even out any ec2 glitches I ran the experiements several times:
+\begin{verbatim}
+$ for i in `seq 3`; 
+do 
+   echo $i; 
+   bash run1.bash; 
+   bash run2.bash; 
+   bash tl.bash; 
+done
+\end{verbatim}
+
+\subsection{Tool script included by all experiment specific scripts}
 \lstinputlisting{assignment2/setup.bash}
+
+\subsection{Experiment scripts for assignment2-part1}
+
+Part1a:\\
+Different threadcounts and index/private key/append mode for tables.
+\lstinputlisting{assignment2/run1.bash}
+Part1a:\\
+Experiment with LOGBUFSZ, CHNGPGS\_THRES values.
+\lstinputlisting{assignment2/run2.bash}
+Part1b:\\
+Tablelocking both insert and updates.
+\lstinputlisting{assignment2/tl.bash}
+
 \end{document}
