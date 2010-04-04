@@ -55,9 +55,10 @@ function cold()
   db2stop force
   sudo /etc/init.d/db2exc stop
   sudo umount /ebs/db2
-  echo "Stopped db2"
-  cachebuster
-  echo "Resetting db accoutns table"
+  echo "Stopped db2 and unmounted /ebs/db2"
+  if [ x${nodd}x = xx ]; then
+    cachebuster
+  fi
   sudo mount /dev/sdg1 /ebs/db2 
   sudo /etc/init.d/db2exc start
   db2 connect to tuning

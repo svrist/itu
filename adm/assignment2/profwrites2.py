@@ -311,6 +311,8 @@ def main(argv=None):
             if option in ("-a","--attribute"):
                 v = int(value)
                 ATTLIST.append(v)
+            if option in ("-l","-tablelock"):
+                TL = True
 
         # Verify preconditions: modes are compatible, required sql files exist
         if (WRITE_MODE == 'update1'): TRANS_MODE = '1'  
