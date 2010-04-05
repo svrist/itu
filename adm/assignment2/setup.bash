@@ -169,10 +169,15 @@ function reads()
 
   local index=$4
 
+  if [ x$spec = x ]; then
+    local spec=employeespec
+  else
+    echo "Spec: $spec"
+  fi
 
 
   if [ x$nocold = x ]; then
-    cold init.sql "1000000 employees.data employeespec 1"
+    cold init.sql "1000000 employees.data $spec 1"
 
     if [ ! x${index}x = xx ]; then
       echo "Adding index: $index"
@@ -183,6 +188,7 @@ function reads()
   fi
   set_snapshots "$logfile.setsnap"
   db2 -v "get db cfg for tuning" > $logfile.dbcfg
+  echo "Params: $params"
   python reads.py -p $sql $params > $logfile.reads
   get_snapshots "$logfile.snapshots"
 }
