@@ -266,7 +266,7 @@ def main(argv=None):
 
         try:
             opts, args = getopt.getopt(argv[1:], 
-              "hvr:t:i:w:x:n:s:k:m:a:", 
+              "hvlr:t:i:w:x:n:s:k:m:a:", 
               ["help", "runs=","threads=", "isol=", "write=", "trans=", "n=", 
               "specfile=", "numkeys=", "numtuples=", "attribute="])
         except getopt.error, msg:

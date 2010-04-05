@@ -88,7 +88,7 @@ function basic()
 function update()
 {
   nocold=1
-  extraparams="-wupdateN -a0 -a2"
+  extraparams="$extraparams -wupdateN -a0 -a2"
   basic $@
   unset nocold
   unset extraparams
@@ -113,7 +113,9 @@ function append()
 function logt()
 {
   local now=`date`
+  echo "===========================================================================" >> $slog
   echo "$now: $1" >> $slog
+  echo "===========================================================================" >> $slog
   echo $1
 }
 

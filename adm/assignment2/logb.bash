@@ -17,12 +17,12 @@ alter_bufferpool automatic
 db2b "bufferpAuto" $sql
 
 logt "Prefetch"
-alter_tablespace_prefetch 10M
-db2b "prefetch10M" $sql
 alter_tablespace_prefetch 50K
 db2b "prefetch50K" $sql
 alter_tablespace_prefetch 1G
 db2b "prefetch1G" $sql
+alter_tablespace_prefetch 10M
+db2b "prefetch10M" $sql
 alter_tablespace_prefetch automatic
 
 logt "Clustering index"
