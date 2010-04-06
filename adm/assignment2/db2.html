@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd"> 
+<html> 
+ <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+    <title>DB2 Experiment (Flot.js)</title> 
+    <link href="layout.css" rel="stylesheet" type="text/css" />
+    <!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]--> 
+    <script language="javascript" type="text/javascript" src="jquery.js"></script> 
+    <script language="javascript" type="text/javascript" src="jquery.flot.js"></script> 
+    <script language="javascript" type="text/javascript" src="graph.js"></script> 
+ </head> 
+ <body> 
+   <style>
+     div.graph {
+       width:800px;
+       height:450px;
+     }
+   </style>
+   <div id="title">Title</div>
+   <div id="graphs"></div>
+   <script>
+     for (var g in graphs){
+       $("#graphs").append("<h1>"+graphs[g][1]+"</h1><div id=\""+graphs[g][0]+"\" style=\"width:800px;height:450px;\">"+graphs[g][0]+"</div><hr/>")
+     }
+
+   </script>
+</body> 
+</html> 

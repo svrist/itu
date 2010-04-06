@@ -1,0 +1,42 @@
+
+#raw $(function () { #end raw
+    #for $g in $graphs.values()
+      #for $row in $g.datalines
+        var $g.name$row['name'] = $g.data[$row['name']];
+      #end for
+    #end for
+
+#for $g in $graphs.values()
+#raw $.plot($(#end raw"#placeholder$g.name"), [ 
+      #for $row in $g.datalines
+            {label: "$row['name']", data: $g.name$row['name'] ,
+points: { show: $row['points'], },
+lines: { show: $row['lines'], steps: $row['steps'] },
+bars: { show: $row['bars'], },
+steps: { show: $row['bars'], },
+            },
+      #end for
+],
+{ #for $k,$v in $g.axisd.items()
+${k}axis:{#for $ak,$av in $v.items()
+ $ak: $av,
+#end for 
+ },
+#end for
+}
+);
+#end for
+      });
+
+#raw $(document).ready(function() { 
+                        $("#title").html(
+#end raw
+                                         "$experiment_name"
+                                        );
+                  });
+
+var graphs = [
+#for $g in $graphs.values()
+["placeholder$g.name","$g.pname"],
+#end for
+];

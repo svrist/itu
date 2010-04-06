@@ -1,8 +1,8 @@
 import sys
-import re 
+import re
 
 class FlotGraph:
-    def __init__(self,name,size=(800,450)):
+    def __init__(self,name,size=(800,450),pname=None):
         self.size=size
         self.datalines = []
         self.data = {}
@@ -10,6 +10,10 @@ class FlotGraph:
         self.axisd = {}
         self.axisd['x']= {}
         self.axisd['y'] = {}
+        if pname is None:
+            self.pname = name
+        else:
+            self.pname = pname
 
     def axis(self,xy,unit,scale=1,decimals=0,min=None,max=None):
         self.axisd[xy] = {'tickFormatter':"function(v,axis){ return (v*%d).toFixed(%d)+\" %s\"}"%(scale,decimals,unit)}
@@ -18,9 +22,9 @@ class FlotGraph:
         if max:
             self.axisd[xy]['max'] = max
 
-    def setup_data(self,name,type="line",points=True,axis=1):
+    def setup_data(self,name,type="line",points=True,axis=1,steps=False,bars=False):
         self.datalines.append( { 'name':name,'lines':'true','points':'true',
-                                'bars': 'false','data':[], 'axis':axis} )
+                                'bars': 'false','data':[], 'axis':axis,'steps':str(steps).lower()} )
         self.data[name] = []
     def add_data(self,name,data):
         self.data[name] = data
@@ -35,11 +39,23 @@ class FlotGraph:
 class FlotWriter:
     def __init__(self,filename,whitelist=['avg','correct']):
         self.data = {}
+        self.datasetup = {}
+        self.oc ={}
         for d in whitelist:
             self.data[d] = {}
+            self.oc[d] = []
+            self.datasetup[d]= {}
+            self.pname[d] = d
         self.log = (lambda x : sys.stderr.write("%s\n"%x))
         self.filename = filename
         self.axissetup = {}
+        self.pname = {}
+
+    def pretty_name(self,name,pretty_name):
+        self.pname[name] = pretty_name
+        self.data[name] = {}
+        self.oc[name] = []
+        self.datasetup[name] = {}
 
     def wannawrite(self,name):
         return name in self.data
@@ -54,10 +70,19 @@ class FlotWriter:
             if b in kwargs:
                 self.axissetup[graphname][axis][b] = kwargs[b]
 
+    def setup_data(self,graphname,dataname,**kwargs):
+        self.datasetup[graphname][dataname]  = kwargs
+
+    def write_data(self,graphname,dataname,data,**kwargs):
+        if self.wannawrite(graphname):
+            self.data[graphname][dataname] = data
+            self.oc[graphname].append(dataname)
+
     def write(self,graphname,dataname,row):
         if self.wannawrite(graphname):
             if not dataname in self.data[graphname]:
                 self.data[graphname][dataname] = []
+                self.oc[graphname].append(dataname)
             self.data[graphname][dataname].append(row)
 
     def flush(self, datanames,experimentname):
@@ -69,9 +94,10 @@ class FlotWriter:
         graphs = {}
         for graphname,data in self.data.items():
             if not graphname in graphs:
-                g = FlotGraph(name=graphname)
-                for i in data.keys():
-                    g.setup_data(i)
+                g = FlotGraph(name=graphname,pname=self.pname[graphname])
+                for i in self.oc[graphname]:
+                    ds = self.datasetup[graphname][i]
+                    g.setup_data(i,**ds)
                 if graphname in self.axissetup:
                     axs = self.axissetup[graphname]
                     for axis in ['x','y','y2']:
@@ -81,7 +107,7 @@ class FlotWriter:
                 graphs[graphname] = g
             else:
                 g = graphs[graphname]
-            for dataname,rawdata in data.items():
+            for dataname,rawdata in [ (d,data[d]) for d in self.oc[graphname] ]:
                 rawdata.sort()
                 g.add_data(dataname,rawdata)
             g.remove_empty_data()
