@@ -10,6 +10,7 @@ class FlotGraph:
         self.axisd = {}
         self.axisd['x']= {}
         self.axisd['y'] = {}
+        self.addinfo =""
         if pname is None:
             self.pname = name
         else:
@@ -41,6 +42,7 @@ class FlotWriter:
         self.data = {}
         self.datasetup = {}
         self.oc ={}
+        self._addinfo = {}
         for d in whitelist:
             self.data[d] = {}
             self.oc[d] = []
@@ -56,6 +58,9 @@ class FlotWriter:
         self.data[name] = {}
         self.oc[name] = []
         self.datasetup[name] = {}
+
+    def addinfo(self,graphname,addinfo):
+        self._addinfo[graphname] = addinfo
 
     def wannawrite(self,name):
         return name in self.data
@@ -95,6 +100,8 @@ class FlotWriter:
         for graphname,data in self.data.items():
             if not graphname in graphs:
                 g = FlotGraph(name=graphname,pname=self.pname[graphname])
+                if graphname in self._addinfo:
+                    g.addinfo = self._addinfo[graphname]
                 for i in self.oc[graphname]:
                     ds = self.datasetup[graphname][i]
                     g.setup_data(i,**ds)

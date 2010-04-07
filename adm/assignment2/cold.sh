@@ -8,7 +8,7 @@ function cachebuster()
   found=0
   while [ $found = 0 ]; do
     sleep 5
-    pkill -USR1 -u db2inst1 ^dd$
+    pkill -USR1 -u db2inst1 ^dd$ 2>&1
     found=$?
   done
   wait $ddpid
@@ -48,6 +48,11 @@ function cold()
     echo "Generating new table .data"
     echo $gentable
     python gentable.py $gentable
+    load=1
+  fi
+
+  if [ ! x$load = x ]; then
+    echo "Loading from load.sql"
     db2 -vf load.sql
   fi
 

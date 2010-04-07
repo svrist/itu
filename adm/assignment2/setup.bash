@@ -139,6 +139,7 @@ function db2b()
     if [ ! x${index}x = xx ]; then
       echo "Adding index: $index"
       db2 -vf $index
+      db2 -v runstats on table db2inst1.employees
     fi
   else
     echo "No cold!"
@@ -177,11 +178,16 @@ function reads()
 
 
   if [ x$nocold = x ]; then
-    cold init.sql "3000000 employees.data $spec 1"
+    if [ x$nogentable = x ]; then
+      cold init.sql "3000000 employees.data $spec 1"
+    else
+      cold init.sql 
+    fi
 
     if [ ! x${index}x = xx ]; then
       echo "Adding index: $index"
       db2 -vf $index
+      db2 -v runstats on table db2inst1.employees
     fi
   else
     echo "No cold!"
