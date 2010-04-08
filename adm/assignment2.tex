@@ -128,10 +128,50 @@ Figure \ref{fig:part1aappnd} added another line to the graph from figure
 \subsubsection{Log knobs}
 Then maybe some database parameters will allow me to speed up insertion rate. I
 chose the size of the Log Buffer (LOGBUFSZ) and the Changed Page Threshold.
-Firstly a larger buffer will allow me to write more before 
+Firstly a larger log buffer(or disabling it) will prolong the time between log
+buffer flushes (or remove them completely).
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{assignment2/logb}
+  \caption[Insert performance -logbufsz]{Graph of insert timing for 100.000 rows(in one
+  transaction -x1) with different LOGBUFSZ (and disabled)}\label{fig:part1alogb}
+\end{figure}
+Figure \ref{fig:part1alogb} shows no remarkable improvement with different
+LOGBUFSZ parameters. Only disabling log altogether gives a small improvement. By
+disabling the log all recovery is impossible and is in my oppinion a
+``dangerous'' choice for performance.
 
+CHNGPGS\_THRESH decides when the buffer pool writes dirty pages to disk
+ asynchronously. With low values pages are ``agressively'' written to disk and
+ higher values postpones the effort.
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{assignment2/chpgs}
+  \caption[Insert performance - chgpgs]{Graph of insert timing for 100.000 rows(in one
+  transaction -x1) with different CHNGPGS\_THRES}\label{fig:part1achgs}
+\end{figure}
+In figure \ref{fig:part1achgs} we see that as long as chgpgs is larger than 30\%
+the performance is unaffected.
+\subsection{Conclusion}
+I had all in all a very hard time to push DB2 to use more disk I/O (and thereby
+being faster). Only the indexes could give a couple of seconds improvement.
 
-\chapter{Part2}
+\section{Part1b}
+The objective is to see if tablelocking can improve insert/updater performance.
+\subsection{Results}
+Due to particulars around table locking these experiments was run with 1 run on
+1 thread. As figure \ref{fig:part1btl} shows, no improvement was seen with
+tablelocking. \footnote{I reran this experiment after the AUTO\_COMMIT bug, but
+still nothing}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{assignment2/tl}
+  \caption[Insert/update performance -Table locking]{Graph of insert/update timing for 100.000 rows(in one
+  transaction -x1) with/without tablelocking}\label{fig:part1btl}
+\end{figure}
+
+\chapter{Part2 - Reads}
 
 
 \chapter{Log book over experiments}
