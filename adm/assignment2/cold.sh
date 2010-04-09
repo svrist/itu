@@ -66,5 +66,9 @@ function cold()
   fi
   sudo mount /dev/sdg1 /ebs/db2 
   sudo /etc/init.d/db2exc start
+  sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+  sudo sync
+  sudo sync
+  sudo sync
   db2 connect to tuning
 }

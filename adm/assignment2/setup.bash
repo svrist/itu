@@ -76,7 +76,9 @@ function basic()
   set_snapshots "$logfile.setsnap"
   db2 -v "get db cfg for tuning" > $logfile.dbcfg
   echo "Starting script... $script $extraparams -n $nums -r $runs -t $threads 2>&1"
+  vmstat 2 10000 > $logfile.vmstat &
   python $script $extraparams -n $nums -r $runs -t  $threads 2>&1 > $logfile.writes
+  pkill -u db2inst1 ^vmstat$
   get_snapshots "$logfile.snapshots"
 
   if [ ! x$tl = x ]; then
@@ -109,6 +111,11 @@ function append()
   db2 -v alter table accounts append $start
 }
 
+function nli()
+{
+  db2 -v ALTER TABLE accounts ACTIVATE NOT LOGGED INITIALLY
+}
+
 
 function logt()
 {
@@ -135,7 +142,11 @@ function db2b()
 
 
   if [ x$nocold = x ]; then
-    cold init.sql "2500000 employees.data employeespec 1"
+    if [ x$nogentable = x ]; then
+      cold init.sql "1500000 employees.data employeespec 1"
+    else
+      cold init.sql
+    fi
     if [ ! x${index}x = xx ]; then
       echo "Adding index: $index"
       db2 -vf $index
@@ -145,7 +156,9 @@ function db2b()
     echo "No cold!"
   fi
   echo $sql
+  vmstat 2 10000 > $logfile.vmstat &
   db2batch -d tuning -f $sql -o r 0 p 5 > $logfile.batch
+  pkill -u db2inst1 ^vmstat$
 }
 
 function alter_bufferpool()
@@ -194,7 +207,9 @@ function reads()
   fi
   set_snapshots "$logfile.setsnap"
   db2 -v "get db cfg for tuning" > $logfile.dbcfg
+
   echo "Params: $params"
+  db2expln -d tuning -t -g -f $sql > $logfile.expln
   vmstat 2 10000 > $logfile.vmstat &
   python reads.py -p $sql $params > $logfile.reads
   pkill -u db2inst1 ^vmstat$

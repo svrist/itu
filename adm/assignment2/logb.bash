@@ -4,6 +4,9 @@
 base=logb
 setup
 sql=qs.sql
+nogentable=1
+load=1
+nodd=1
 
 logt "basic"
 db2b "basic" $sql >> $slog
