@@ -7,7 +7,7 @@ Rasmus Pagh - pagh@itu.dk\\ITU Copenhagen}
 \maketitle
 \newpage
 
-\chapter{Part 1}
+\chapter{Part 1 - Query tuning}
 
 \section{Part1a}
 Baseline of the query: The query given uses an inequality ``self-join''
@@ -313,27 +313,108 @@ the throughput has been affected (Scripts in Appendix \ref{app:run1rr} and
 \ref{app:clustrr}.
 
 \subsubsection{Writes}
-
+I reran the thread experiment from assignment2(Figure 2 in assignment 2) one for a table with compression
+and one without compression, trying to insert 1000000 rows with
+``profwrites2.py''. Figure \ref{fig:writecomp} contains the summary of that rerun and
+shows that additional overhead is
+procurred when using a compressed table. In my case just about 10\%.
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{assignment3/writecomp}
+  \caption[Write performance - compress]{Graph of write timing
+  for 10 threads for either a normal table or a table with
+  compression. Different index types}\label{fig:writecomp}
+\end{figure}
 
 \subsubsection{Reads}
+For this experiment I reran the ``clustering index'' experiement(Figure 8 in
+assignment 2) for both tables with and without compression and summarized the
+results in Figure \ref{fig:readcomp}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{assignment3/readcomp}
+  \caption[Read performance - Clustering Index compress]{Graph of read timing
+  for 100 multipoint queries for either a normal table or a table with
+  compression.}\label{fig:readcomp}
+\end{figure}
+
+Interestingly multipoint queries without indexes gets slower on a table with
+compression, where tables with compression AND indexes gives faster lookup!
+
+When comparing snapshot statistics for the queries it looks like that
+compression allows for 30-40\% fewer buffer pool logical and physical reads  but
+the physical reads is slower when using compression than when not. For the
+indexed multipoint queries the index reduce the number of physical reads for
+both data and index buffer pool and the reduction in index buffer pool physical
+reads is big enough to counter the additional overhead when using compression:
+
+\noindent\begin{tabular}{p{6.6cm}|p{6.6cm}}
+  \multicolumn{2}{c}{No index}\\
+No compression:&With Compression:\\ \hline
+\noindent\footnotesize\protect\begin{verbatim}
+Buffer pool data logical reads       = 416516
+Buffer pool data physical reads      = 356819
+Total buffer pool read time          = 35447
+Total elapsed asynchronous read time = 34828
+Asynchronous data read requests      = 11436
+\end{verbatim}
+&
+\noindent\footnotesize\protect\begin{verbatim}
+Buffer pool data logical reads       = 296927
+Buffer pool data physical reads      = 262578
+Total buffer pool read time          = 47058
+Total elapsed asynchronous read time = 44836
+Asynchronous data read requests      = 8570
+\end{verbatim}
+\\ \hline
+\end{tabular}
+
+
+\noindent\begin{tabular}{p{6.6cm}|p{6.6cm}}
+  \multicolumn{2}{c}{NonClustering Index}\\
+  No compression:&With Compression:\\ \hline
+\noindent\footnotesize\begin{verbatim}
+Buffer pool data logical reads       = 230436
+Buffer pool data physical reads      = 7455
+Asynchronous pool data page reads    = 7262
+Buffer pool index logical reads      = 10406
+Buffer pool index physical reads     = 4486
+Total buffer pool read time          = 8242
+Total elapsed asynchronous read time = 2282
+\end{verbatim}
+&
+\noindent\footnotesize\begin{verbatim}
+Buffer pool data logical reads       = 198195
+Buffer pool data physical reads      = 4799
+Asynchronous pool data page reads    = 4720
+Buffer pool index logical reads      = 3513
+Buffer pool index physical reads     = 1143
+Total buffer pool read time          = 4543
+Total elapsed asynchronous read time = 1459
+\end{verbatim}
+\\ \hline
+\end{tabular}
+
 
 
 
 \chapter{Log book over experiments}\label{log}
 \section{Part 1}
-
 \begin{itemize}
 \item[2010-04-08:] Spent all day trying to install spatial extensions for db2.
-To no avail. The installer cant see which BASE_DB2_ENGINE is installed. The
+To no avail. The installer cant see which BASE\_DB2\_ENGINE is installed. The
 \verb|db2ls -q -b <something>| is empty
 \item[2010-04-09:] Got hint from Thomas Berglund in the newsgroup about how to
   lower cardinality.
 \end{itemize}
 
 \section{Part2}
+\begin{itemize}
 \item[2010-04-09:] Having trouble estimating disk usage of a database as DB2
   reserves space on disk even though it might not be used at present. Using the
   indicators from within DB2 instead of du(1)
+\end{itemize}
 \appendix
 \newpage
 \chapter{Appendix}
