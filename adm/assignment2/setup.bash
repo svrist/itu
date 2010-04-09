@@ -191,6 +191,8 @@ function reads()
 
   if [ x$init = x ]; then
     init="init.sql"
+  else
+    echo "new init: $init"
   fi
 
 
@@ -213,7 +215,7 @@ function reads()
   db2 -v "get db cfg for tuning" > $logfile.dbcfg
 
   echo "Params: $params"
-  db2expln -d tuning -t -g -f $sql > $logfile.expln
+  db2expln -d tuning -terminator ";" -t -g -f $sql > $logfile.expln
   vmstat 2 10000 > $logfile.vmstat &
   python reads.py -p $sql $params > $logfile.reads
   pkill -u db2inst1 ^vmstat$
