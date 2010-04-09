@@ -189,12 +189,16 @@ function reads()
     echo "Spec: $spec"
   fi
 
+  if [ x$init = x ]; then
+    init="init.sql"
+  fi
+
 
   if [ x$nocold = x ]; then
     if [ x$nogentable = x ]; then
-      cold init.sql "3000000 employees.data $spec 1"
+      cold $init "3000000 employees.data $spec 1"
     else
-      cold init.sql 
+      cold $init
     fi
 
     if [ ! x${index}x = xx ]; then
