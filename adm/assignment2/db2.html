@@ -2,12 +2,11 @@
 <html> 
  <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
-    <title>DB2 Experiment (Flot.js)</title> 
+    <title>DB2 Experiment Assignment2</title> 
     <link href="layout.css" rel="stylesheet" type="text/css" />
     <!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]--> 
     <script language="javascript" type="text/javascript" src="jquery.js"></script> 
     <script language="javascript" type="text/javascript" src="jquery.flot.js"></script> 
-    <script language="javascript" type="text/javascript" src="graph.js"></script> 
  </head> 
  <body> 
    <style>
@@ -15,14 +14,67 @@
        width:800px;
        height:450px;
      }
+
+     h1 {
+       font-size: 16pt;
+       margin-top: 5px;
+     }
+     #graphs hr {
+       margin-bottom: 20px;
+     }
+     #title {
+       font-weight: bold;
+       font-size:20pt;
+       text-align: center;
+     }
+     #menu {
+       width: 250px;
+       text-align: center;
+       margin-left: 100px;
+       padding-left: 0px;
+       margin-bottom: 10px;
+     }
+     #graphs {
+
+       border: 1px solid black;
+       padding: 10px;
+       width: 830px;
+     }
    </style>
    <div id="title">Title</div>
+   <div id="menu">Menu: <a href="db2.html?experiment=tgraph.js">Tuple/s</a> -
+     <a href="db2.html?experiment=qgraph.js">Query/s</a></div>
    <div id="graphs"></div>
-   <script>
-     for (var g in graphs){
-       $("#graphs").append("<h1>"+graphs[g][1]+"</h1><div id=\""+graphs[g][0]+"\" style=\"width:800px;height:450px;\">"+graphs[g][0]+"</div><hr/>")
+   <script language="javascript" type="text/javascript">
+function getParameterByName( name )
+{
+  name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+  var regexS = "[\\?&]"+name+"=([^&#]*)";
+  var regex = new RegExp( regexS );
+  var results = regex.exec( window.location.href );
+  if( results == null )
+    return "tgraph.js";
+  else
+ return results[1];
+}
+
+$.ajaxSetup({async: false});
+var e = getParameterByName("experiment")
+  $.getScript(e);
+  $.ajaxSetup({async: true});
+  $("#title").append(" - "+getParameterByName("experiment"));
+
+  for (var g in graphs){
+       $("#graphs").append("<h1>"+graphs[g][1]+"</h1>")
+       if (graphs[g][2] != ""){
+         $("#graphs").append("<span>"+graphs[g][2]+"</span>")
+       }
+       $("#graphs").append("<div id=\""+graphs[g][0]+"\" style=\"width:800px;height:450px;\">"+graphs[g][0]+"</div><hr/>")
      }
+
+
 
    </script>
 </body> 
 </html> 
+
