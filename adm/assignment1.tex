@@ -1,9 +1,11 @@
 \input{pream}
 \title{Advanced Data Management - Assignment 1\\Value of Serializability}
-\author{S\o ren Bjerregaard Vrist\\ITU Copenhagen}
+\author{S\o ren Bjerregaard Vrist - 151082-sbvr@itu.dk\\ \\Undervisere: Philippe Bonnet - phbo@itu.dk og
+Rasmus Pagh - pagh@itu.dk\\ITU Copenhagen}
 
 \begin{document}
 \maketitle
+\newpage
 
 This is the solution and logbog book of S\o ren B. Vrist comprising a description of the execution
 of experiments as well as results and a discussion of what the experiments show
@@ -137,12 +139,12 @@ I see no noticable difference in the correctness graph (Figure
 
 \begin{figure}
   \centering
-  \includegraphics[width=12cm]{assignment1/curon_corr}
+  \includegraphics[width=12cm]{assignment1/curoff_corr}
   \caption[Correctness - new script,currently commited semantics off
   ]{Correctness as a function of
   swap-threads for both Cursor Stability(CS) and Repeatable Read(RR) isolation
   levels.\\ Comparable to the equivalant graph with currently commited
-  semantics ON }\label{fig:curoncorr}
+  semantics ON }\label{fig:curoffcorr}
 \end{figure}
 
 
@@ -162,8 +164,8 @@ I see no noticable difference in the correctness graph (Figure
     charateristics.(Appendix \ref{app:swmr.py}).
   \item[2010-02-26 - 03-01:] Run experiments and generate graphs.
 \end{itemize}
+\newpage
 \appendix
-
 \chapter{Source Code}
 
 \section{swapmatchrun.py}\label{app:swmr.py}

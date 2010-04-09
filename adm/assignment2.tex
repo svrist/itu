@@ -1,6 +1,9 @@
 \input{pream}
 \title{Advanced Data Management - Assignment 2}
-\author{S\o ren Bjerregaard Vrist\\ITU Copenhagen}
+\author{S\o ren Bjerregaard Vrist - 151082-sbvr@itu.dk\\ \\Undervisere: Philippe
+Bonnet - phbo@itu.dk og
+Rasmus Pagh - pagh@itu.dk\\ITU Copenhagen}
+
 
 \begin{document}
 \maketitle
@@ -173,6 +176,153 @@ still nothing}.
 
 \chapter{Part2 - Reads}
 
+\section{Part2a}
+The first investigations showed some inconsistencies in the runtime over a
+complete table scan. See the log book in Section \ref{logb:part2}, and this
+experiment I used db2batch instead.
+
+I tried tuning the BufferPool size, prefetching, LogBufferSize and indexes as
+graphed in Figure \ref{fig:readio}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{assignment2/readio}
+  \caption[Read performance - Table locking]{Graph of read timing for 2.500.000
+  rows with different parameters tweaked}\label{fig:readio}
+\end{figure}
+
+Figure \ref{fig:readio} shows that none of my tweakings gave any better
+performance. Prefetching set to 10Mb was clearly not a good idea as well as a
+covering index gave additional overhead. I have no good explanation for the
+overhead associated with a prefetch of 10Mb. The snapshot statistics shows that
+the buffer might have been flushed due to the prefetch side which leads to many
+physical reads from the bufferpool:
+\begin{verbatim}
+Baseline   : Buffer pool data physical reads = 102
+Prefetch10M: Buffer pool data physical reads = 28242
+\end{verbatim}
+The covering index is slower since the query planner decides to use the index
+adding an additional layer of datastructures eventhough no sorting is needed and
+the complete table will be scanned any way:\\
+\noindent\begin{tabular}{p{5cm}|p{5cm}}
+  Covering Index & No index
+ \\
+\begin{verbatim}
+Optimizer Plan:
+
+    Rows   
+  Operator 
+    (ID)   
+    Cost   
+          
+  2.5e+06 
+    n/a   
+  RETURN  
+   ( 1)   
+  24532.6 
+    |     
+  2.5e+06 
+    n/a   
+  IXSCAN  
+   ( 2)   
+  24532.6 
+    |     
+ 2.5e+06  
+ Index:   
+ DB2INST1 
+ NC3      
+\end{verbatim}
+&
+\begin{verbatim}
+Optimizer Plan:
+
+    Rows   
+  Operator 
+    (ID)   
+    Cost   
+          
+  2.5e+06 
+    n/a   
+  RETURN  
+   ( 1)   
+  31354.9 
+    |     
+  2.5e+06 
+    n/a   
+  TBSCAN  
+   ( 2)   
+  31354.9 
+    |      
+  2.5e+06  
+    n/a    
+ Table:    
+ DB2INST1  
+ EMPLOYEES 
+\end{verbatim}
+\\
+\hline
+\end{tabular}
+
+\section{Part2b - Clustering index}
+Multipoint query which should show that an index can help with performance, and
+show the difference between a clustering and normal index. My graph in Figure
+\ref{fig:clust} shows the same order of magnitude improvement in throughput when
+using and index. The difference between clustered and non clustered index is a
+best minimal if not opposite to the graph from the book.
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{assignment2/clust}
+  \caption[Read performance - Clustering Index]{Graph of read timing as a
+  function of multi\_point queries for different index types. }\label{fig:clust}
+\end{figure}
+
+The index provides an efficent (b-tree+) way to do lookup for a given value in
+the table. Without an index all rows must be scanned to find matches which
+explains the difference between using an index and not. A clustering index
+orders the data in the table based on the index columns such that ``close
+values'' are close in the table. This should provide an additional benefit when
+doing multipoint queries as all results matching a criteria will be close and
+additional lookup be limited. This is not quite obvious in my experiment, which
+might be due to the non-clustering index implictly doing clustering or similar
+optimization techniques.
+
+\section{Part2c - Covering index}
+This experiment should investigate how a covering index - that is an index
+containing all columns being used in both where clause and select clause -
+compares to lesser indexes and a clustering indexes as well as the ordering of
+the columns in the index definition.
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{assignment2/cover}
+  \caption[Read performance - Covering Index]{Graph of read throughput comparing a
+  covering index to other index types}\label{fig:cover}
+\end{figure}
+Figure \ref{fig:cover} shows the result of my experiment. As in the book a good
+covering index (the equality columns first, then the select columns) is the best
+choice where as a bad covering index actually is slower than a non covering
+index.
+
+\section{Part2d - Selectivity}
+As seen in the part1a using an index for selecting many rows can give additional
+overhead. This experiement compares the performance of selecting increasing
+percentage of the table contents between an index and using no index.\\
+
+As noted in the log book(Section \ref{logb:part2}) the reads.py didnt actually
+fetch the rows found by the query, so to get reasoable results for this
+experiment I had to add some additional code to reads.py.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=12cm]{assignment2/select}
+  \caption[Read performance - Index vs. Scan]{Graph of throughput as a function
+  of percentage of a complete table selected for both a non-clustering index and
+  with out}\label{fig:select}
+\end{figure}
+
+Figure \ref{fig:select} shows that an index is the best choice up until when
+15\% or more is returned by the query. After that it is more efficent to scan
+the complete table.
+
 
 \chapter{Log book over experiments}
 
@@ -205,17 +355,40 @@ still nothing}.
     This affects all experiments until today, including assignment1.
 \end{itemize}
 
-\section{Part2}
+\section{Part2}\label{logb:part2}
 \begin{itemize}
-  \item part2
+  \item[2010-04-01:] My investigations show that reads.py  doesnt actually fetch
+    the rows, even though ibm\_db.execute executes a query that encompass the
+    complete table. Both vmstat and the run time suggest this. I decided to use
+    db2batch for at least part2a.
+  \item[2010-04-07:] Needed a usable reads.py for part2d. Added this to force
+    reads.py to actually do the IO:
+\begin{verbatim}
+rowcount=0
+dict = ibm_db.fetch_assoc(query_stmt)
+while dict != False:
+   rowcount +=1
+   dict = ibm_db.fetch_assoc(query_stmt)
+print ``rc: %d''%(rowcount) 
+\end{verbatim}
+The print part is not important, but ``fetch\_assoc'' (or one of the other
+fetch\_) is needed.
+   \item[2010-04-07:] Needed a way to fast graphing part2d experiments.
+     Developed yet another script for parsing experiment output and generate
+     flot js files. Included in appendix \ref{app:parseexperiment}
 \end{itemize}
 
 \appendix
+\newpage
 \chapter{Appendix}
 \section{Profwrites2.py}\label{app:prof}
 New edition of the writes.py that does work on subsequent runs as well as no
 shared mutex.
 \lstinputlisting{assignment2/profwrites2.py}
+
+\section{Parse\_experimnet.py}\label{app:parseexperiment}
+\lstinputlisting{assignment2/parse_experiment.py}
+
 
 \section{writestl.py}\label{app:tl}
 New edition of the writes.py that contains a tablelocking switch.
@@ -247,5 +420,17 @@ Experiment with LOGBUFSZ, CHNGPGS\_THRES values.
 Part1b:\\
 Tablelocking both insert and updates.
 \lstinputlisting{assignment2/tl.bash}
+\subsection{Experiment scripts for assignment2-part2}
+Part2a:\\
+\lstinputlisting{assignment2/logb.bash}
+
+Part2b:\\
+\lstinputlisting{assignment2/clust.bash}
+
+Part2c:\\
+\lstinputlisting{assignment2/cover.bash}
+
+Part2d:\\
+\lstinputlisting{assignment2/select2.bash}
 
 \end{document}
